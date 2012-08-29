@@ -12,8 +12,6 @@ local LibHook = LibStub("LibScriptableUtilsHook-1.0", true)
 assert(LibHook, MAJOR .. " requires LibScriptableUtilsHook-1.0")
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
 assert(LibTimer, MAJOR .. " requires LibScriptableUtilsTimer-1.0")
-local PluginTalents = LibStub("LibScriptablePluginTalents-1.0")
-assert(PluginTalents, MAJOR .. " requires LibScriptablePluginTalents-1.0")
 local PluginColor = LibStub("LibScriptablePluginColor-1.0")
 assert(PluginColor, MAJOR .. " requires LibScriptablePluginColor-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
@@ -1259,6 +1257,7 @@ ScriptEnv.PVPDuration = PVPDuration
 
 local count = 0
 local function PVPRank(unit)
+--[[
 	local pvp = PluginTalents.UnitPVPStats(unit);
 	if not CheckInteractDistance(unit, 1) and not pvp then return L["Out of Range"] end
 	local txt;
@@ -1281,10 +1280,12 @@ local function PVPRank(unit)
 	  txt = L["Fetching"] .. elips
 	end
 	return txt
+]]
 end
 ScriptEnv.PVPRank = PVPRank
 
 local function ArenaTeam(unit, num)
+--[[
 	local pvp = PluginTalents.UnitPVPStats(unit);
 	if not pvp then return "" end
 	local team = pvp.teams[num]
@@ -1310,6 +1311,7 @@ local function ArenaTeam(unit, num)
 		text = format("%s %s %s %s (%.1f pts) %s", tag, emblem, team.teamName or "Name?", PluginColor.Colorize(team.teamRating, perc, 0.5, 1), points, winlost)
 	end
 	return text
+]]
 end
 ScriptEnv.ArenaTeam = ArenaTeam
 
@@ -1553,9 +1555,9 @@ local function update_timers()
 end
 
 function PluginLuaTexts:PARTY_MEMBERS_CHANGED(event)
-  local prefix, min, max = "raid", 1, GetNumRaidMembers()
+  local prefix, min, max = "raid", 1, GetNumGroupMembers()
 	if max == 0 then
-		prefix, min, max = "party", 1, GetNumPartyMembers()
+		prefix, min, max = "party", 1, GetNumGroupMembers()
 	end
 	if max == 0 then
 		-- not in a raid or a party
