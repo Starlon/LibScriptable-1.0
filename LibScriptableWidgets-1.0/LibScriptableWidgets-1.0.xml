@@ -9,6 +9,7 @@
 <Script file = "LibScriptableWidgetKey-1.0\LibScriptableWidgetKey-1.0.lua"/>
 <Script file = "LibScriptableWidgetTimer-1.0\LibScriptableWidgetTimer-1.0.lua"/>
 <Script file = "LibScriptableWidgetGestures-1.0\LibScriptableWidgetGestures-1.0.lua"/>
+
 <Script file = "LibScriptableWidgetImage-1.0\LibScriptableWidgetImage-1.0.lua"/>
 <Script file = "LibScriptableWidgetColor-1.0\LibScriptableWidgetColor-1.0.lua"/>
 

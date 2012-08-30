@@ -5,6 +5,7 @@ assert(LibStub, MAJOR.." requires LibStub")
 local LibUnitTooltipScan = LibStub:NewLibrary(MAJOR, MINOR)
 if not LibUnitTooltipScan then return end
 local self = LibUnitTooltipScan
+local L = LibStub("LibScriptableLocale-1.0", true).L
 
 if not LibUnitTooltipScan.__index then 
 	LibUnitTooltipScan.__index = LibUnitTooltipScan
@@ -68,7 +69,7 @@ function LibUnitTooltipScan:New(environment)
 	return environment
 end
 
-local getLocation, getGuild, getName
+local getLocation, getGuild, getName, getPetType
 
 local scanunit
 
@@ -87,7 +88,7 @@ function LibUnitTooltipScan.GetUnitTooltipScan(unit)
 	tooltip:SetUnit(unit)
 	tooltip:Show()
 	scanunit = unit
-	return getName(), getGuild(), getLocation()
+	return getName(), getGuild(), getLocation(), getPetType()
 end
 
 local LEVEL_start = "^" .. (type(LEVEL) == "string" and LEVEL or "Level")
@@ -127,4 +128,13 @@ end
 
 function getName()
 	return self.leftLines[1]:GetText()
+end
+
+function getPetType()
+	local str = self.leftLines[3]:GetText()
+	if str then
+		str = str:match(L["Pet Level .* (.*)"])
+	end
+
+	return str
 end
