@@ -100,7 +100,7 @@ do
 		tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 		tooltip:SetUnit(unit)
 		tooltip:Show()
-		return getLines(unit)
+		return getLines(lines)
 	end
 end
 
