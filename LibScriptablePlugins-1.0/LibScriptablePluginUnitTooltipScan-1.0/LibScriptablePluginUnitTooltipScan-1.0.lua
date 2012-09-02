@@ -78,7 +78,6 @@ end
 --
 local getLocation, getGuild, getName, getPetType, getLines
 do
-	local lines = {left={}, right={}}
 	function LibUnitTooltipScan.GetUnitTooltipScan(unit)
 		tooltip:Hide()
 		tooltip:ClearLines()
@@ -89,7 +88,19 @@ do
 		local guild, guildI = getGuild()
 		local location, locationI = getLocation(unit)
 		local type, typeI = getPetType()
-		return name, nameI, guild, guildI, location, locationI, type, typeI, getLines(lines)
+		return name, nameI, guild, guildI, location, locationI, type, typeI
+	end
+end
+
+do
+	local lines = {left={}, right={}}
+	function LibUnitTooltipScan.UnitTTLInes(unit)
+		tooltip:Hide()
+		tooltip:ClearLines()
+		tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+		tooltip:SetUnit(unit)
+		tooltip:Show()
+		return getLines(unit)
 	end
 end
 

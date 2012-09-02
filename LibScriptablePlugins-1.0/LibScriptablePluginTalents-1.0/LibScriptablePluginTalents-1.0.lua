@@ -4,8 +4,6 @@ local PluginTalents = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginTalents then return end
 --local GroupTalents = LibStub("LibGroupTalents-1.0", true)
 --assert(GroupTalents, MAJOR .. " requires LibGroupTalents-1.0")
-local TalentQuery = LibStub("LibTalentQuery-1.0", true)
-assert(TalentQuery, MAJOR .. " requires LibTalentQuery-1.0")
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
 assert(LibTimer, MAJOR .. " requires LibScriptableUtilsTimer-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
@@ -35,6 +33,7 @@ local inspectUnit
 local THROTTLE_TIME = 500
 local throttleTimer 
 local ScriptEnv = {}
+local lastInspect = 0
 
 if not PluginTalents.__index then
 	PluginTalents.__index = PluginTalents
@@ -275,14 +274,13 @@ function PluginTalents.SendQuery(unit)
 	local guid = UnitGUID(unit)
 	if not UnitIsPlayer(unit) or not (CheckInteractDistance(unit, 1)) then return end
 
-	if UnitIsUnit(unit, "player") then
-		PluginTalents:TalentQuery_Ready(_, UnitName(unit), nil, "player")
-	else
-		TalentQuery:Query(unit)
-	end
+	frame:RegisterEvent("INSPECT_READY")
+	NotifyInspect(unit)
+	lastInspect = GetTime()
 end
 
 function PluginTalents.UnitILevel(unit, returnNil)
+	do return 0 end
 	if type(unit) ~= "string" then return end
 	local guid = UnitGUID(unit)
 	if not UnitIsPlayer(unit) or not UnitExists(unit) then return end
@@ -305,6 +303,7 @@ ScriptEnv.UnitILevel = PluginTalents.UnitILevel
 
 function PluginTalents.SpecText(unit, returnNil)
 	if type(unit) ~= "string" then return end
+	do return end
 	if not UnitIsPlayer(unit) or not UnitExists(unit) then return end
 	local guid = UnitGUID(unit)
 	local guid = UnitGUID(unit)
@@ -535,8 +534,5 @@ function WipeInspect()
 end
 ScriptEnv.WipeInspect = WipeInspect
 
---GroupTalents.RegisterCallback(PluginTalents, "LibGroupTalents_Update", "OnUpdate")
-TalentQuery.RegisterCallback(PluginTalents, "TalentQuery_Ready")
-TalentQuery.RegisterCallback(PluginTalents, "LibGroupTalents_RoleChange", "OnRoleChange")
 throttleTimer = LibTimer:New(MAJOR .. " throttle timer", THROTTLE_TIME, true, PluginTalents.SendQuery)
 
