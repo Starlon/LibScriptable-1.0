@@ -69,30 +69,40 @@ function LibUnitTooltipScan:New(environment)
 	return environment
 end
 
-local getLocation, getGuild, getName, getPetType
 
-local scanunit
 
 --- Return the default unit tooltip's information
 -- @usage LibUnitTooltipScan:GetUnitTooltipScan(unit)
 -- @param unit The unitid to retrieve information about
--- @return Name, guild, and location
-function LibUnitTooltipScan.GetUnitTooltipScan(unit)
-	if not unit then unit = "mouseover" end
-    if not UnitIsConnected(unit) then
-        return nil
-    end
-	tooltip:Hide()
-	tooltip:ClearLines()
-	tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-	tooltip:SetUnit(unit)
-	tooltip:Show()
-	scanunit = unit
-	return getName(), getGuild(), getLocation(), getPetType()
+-- @return Name, guild, and location, pettype, and a table `lines = {left={}, right={}}`.
+--
+local getLocation, getGuild, getName, getPetType, getLines
+do
+	local lines = {left={}, right={}}
+	function LibUnitTooltipScan.GetUnitTooltipScan(unit)
+		tooltip:Hide()
+		tooltip:ClearLines()
+		tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+		tooltip:SetUnit(unit)
+		tooltip:Show()
+		local name, nameI = getName()
+		local guild, guildI = getGuild()
+		local location, locationI = getLocation(unit)
+		local type, typeI = getPetType()
+		return name, nameI, guild, guildI, location, locationI, type, typeI, getLines(lines)
+	end
+end
+
+function getLines(lines)
+	for i = 1, tooltip:NumLines() do
+		lines.left[i] = lines.left[i] and self.leftLines[i]:GetText()
+		lines.right[i] = lines.left[i] and left.rightLines[i]:GetText()
+	end
+	return lines
 end
 
 local LEVEL_start = "^" .. (type(LEVEL) == "string" and LEVEL or "Level")
-function getLocation()
+function getLocation(scanunit)
     local left_2 = self.leftLines[2]:GetText()
     local left_3 = self.leftLines[3]:GetText()
     if not left_2 or not left_3 then
@@ -107,13 +117,13 @@ function getLocation()
     local hasFaction = factionText and not UnitPlayerControlled(scanunit) and not UnitIsPlayer(scanunit) and (UnitFactionGroup(scanunit) or factionList[factionText])
 	if UnitInParty(scanunit) or UnitInRaid(scanunit) then
 		if hasGuild and hasFaction then
-			return self.leftLines[5]:GetText()
+			return self.leftLines[5]:GetText(), 5
 		elseif (hasGuild or hasFaction) then
 			local text = self.leftLines[4]:GetText()
 			if text == PVP then return nil end
-			return self.leftLines[4]:GetText()
+			return self.leftLines[4]:GetText(), 4
 		elseif not left_3:find(LEVEL_start) and left_3 ~= PVP then
-			return left_3
+			return left_3, 3
 		end
 	end
 	return nil
@@ -123,18 +133,22 @@ function getGuild()
     local left_2 = self.leftLines[2]:GetText()
 	if not left_2 then return nil end
     if left_2:find(LEVEL_start) then return nil end
-    return "<" .. left_2 .. ">"
+    return "<" .. left_2 .. ">", 2
 end
 
 function getName()
-	return self.leftLines[1]:GetText()
+	return self.leftLines[1]:GetText(), 1
 end
 
-function getPetType()
-	local str = self.leftLines[3]:GetText()
-	if str then
-		str = str:match(L["Pet Level .* (.*)"])
-	end
 
-	return str
+function getPetType()
+	for i = 1, tooltip:NumLines() do
+		local str = self.leftLines[i]:GetText()
+		local tst =  str:match(L[".*Pet.*Level.* (.*)"])
+
+		if tst then
+			return tst, i
+		end
+	end
+	return nil
 end
