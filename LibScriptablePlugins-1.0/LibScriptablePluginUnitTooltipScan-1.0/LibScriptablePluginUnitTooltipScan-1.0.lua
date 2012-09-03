@@ -74,9 +74,10 @@ end
 --- Return the default unit tooltip's information
 -- @usage LibUnitTooltipScan:GetUnitTooltipScan(unit)
 -- @param unit The unitid to retrieve information about
--- @return Name, guild, and location, pettype, and a table `lines = {left={}, right={}}`.
+-- @return name, name-line, guild, guild-line, location, location-line, type, type-line, race, race-line, class, class-line
+-- Where *-line is the index on the tooltip's face of double fontstring lines.
 --
-local getLocation, getGuild, getName, getPetType, getLines
+local getLocation, getGuild, getName, getPetType, getLines, getRace, getClass
 do
 	function LibUnitTooltipScan.GetUnitTooltipScan(unit)
 		tooltip:Hide()
@@ -87,8 +88,10 @@ do
 		local name, nameI = getName()
 		local guild, guildI = getGuild()
 		local location, locationI = getLocation(unit)
+		local class, classI = getClass()
+		local race, raceI = getRace()
 		local type, typeI = getPetType()
-		return name, nameI, guild, guildI, location, locationI, type, typeI
+		return name, nameI, guild, guildI, location, locationI, type, typeI, race, raceI, class, classI
 	end
 end
 
@@ -116,6 +119,13 @@ local LEVEL_start = "^" .. (type(LEVEL) == "string" and LEVEL or "Level")
 function getLocation(scanunit)
     local left_2 = self.leftLines[2]:GetText()
     local left_3 = self.leftLines[3]:GetText()
+    local left_4 = self.leftLines[4]:GetText()
+    local right_4 = self.rightLines[4]:GetText()
+	    
+    if left_4 and left_4:find("Loc:") then
+	return left_4, right_4
+    end	
+
     if not left_2 or not left_3 then
         return nil
     end
@@ -162,4 +172,16 @@ function getPetType()
 		end
 	end
 	return nil
+end
+
+function getRace()
+	local text = self.leftLines[4]:GetText() or ""
+	local race = text:match("^"..LEVEL..".* (.*) .*")
+	return race, 4
+end
+
+function getClass()
+	local text = self.leftLines[4]:GetText() or ""
+	local class = text:match("^"..LEVEL..".* .* (.*)")
+	return class, 4
 end

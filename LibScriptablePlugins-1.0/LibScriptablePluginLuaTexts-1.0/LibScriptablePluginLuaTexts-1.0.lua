@@ -777,7 +777,7 @@ local function Class(unit)
 	if UnitIsPlayer(unit) then
 		return UnitClass(unit) or UNKNOWN
 	else
-		return UnitClassBase(unit) or UNKNOWN
+		return UnitClassBase(unit) or select(13, LibUnitTooltipScan.GetUnitTooltipScan(unit)) or UNKNOWN
 	end
 end
 ScriptEnv.Class = Class
