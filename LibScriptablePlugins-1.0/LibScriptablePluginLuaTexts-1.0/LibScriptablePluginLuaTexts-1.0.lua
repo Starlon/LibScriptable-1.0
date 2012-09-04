@@ -777,10 +777,15 @@ local function Class(unit)
 	if UnitIsPlayer(unit) then
 		return UnitClass(unit) or UNKNOWN
 	else
-		return UnitClassBase(unit) or select(13, LibUnitTooltipScan.GetUnitTooltipScan(unit)) or UNKNOWN
+		return UnitClassBase(unit) or select(13, PluginUnitTooltipScan.GetUnitTooltipScan(unit)) or UNKNOWN
 	end
 end
 ScriptEnv.Class = Class
+
+local function Location(unit)
+	return select(5, PluginUnitTooltipScan.GetUnitTooltipScan(unit))
+end
+ScriptEnv.Location = Location
 
 local ShortClass_abbrev = {
 	[L["Priest"]] = L["Priest_short"],

@@ -5,7 +5,7 @@
 <Script file = "LibScriptableLCDText-1.0\LibScriptableLCDText-1.0.lua"/>
 <Script file = "LibScriptableLCDCore-1.0\LibScriptableLCDCore-1.0.lua"/>
 <Script file = "LibScriptableLCDCoreLite-1.0\LibScriptableLCDCoreLite-1.0.lua"/>
-<Script file = "LibScriptableLCDDriverQTip-1.0\LibScriptableLCDDriverQTip-1.0.lua"/>
+<!--<Script file = "LibScriptableLCDDriverQTip-1.0\LibScriptableLCDDriverQTip-1.0.lua"/>-->
 <Script file = "LibScriptableLCDDriverCharacter-1.0\LibScriptableLCDDriverCharacter-1.0.lua"/>
 <Script file = "LibScriptableLCDLayoutOptions-1.0\LibScriptableLCDLayoutOptions-1.0.lua"/>
 

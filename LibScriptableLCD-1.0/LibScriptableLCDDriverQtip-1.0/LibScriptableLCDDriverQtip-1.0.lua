@@ -1,3 +1,4 @@
+do return end
 local MAJOR = "LibScriptableLCDDriverQTip-1.0"
 local MINOR = 24
 assert(LibStub, MAJOR.." requires LibStub") 
