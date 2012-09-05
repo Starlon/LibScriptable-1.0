@@ -138,21 +138,27 @@ local function ItemOnUpdate(elapsed)
 end
 
 function PluginTalents:TalentQuery_Ready(e, name, realm, unitid)
-	local class = UnitClass(unitid)
+
+	local specid = GetInspectSpecialization(unitid)
+	local role1 = GetSpecializationRoleByID(specid)
+	local _, name = GetSpecializationInfoByID(specid)
 	local guid = UnitGUID(unitid)
-	local isnotplayer = not UnitIsUnit("player", unitid)
-	local talentGroup = GetActiveSpecGroup(isnotplayer)
 
 	if not spec[guid] then
 		spec[guid] = new()
 		spec[guid].guid = guid
 	end
 
-	spec[guid].talentGroup = talentGroup
-	
-	local _, treename, _, iconTexture, background = GetSpecializationInfo(talentGroup, false)
-	spec[guid][talentGroup] = new(treename, iconTexture, background)
+	if UnitIsUnit("player", unitid) then
+		local specgroup = GetActiveSpecGroup(false)
+		local id, name, description, texture, background = GetSpecializationInfo(specgroup, false);
 
+		spec[guid] = new(name, texture, background)
+	else
+		local id, name, description, icon, background, role, class = GetSpecializationInfoByID(specid)
+	
+		spec[guid] = new(name, texture, background, role)
+	end
 	inspectUnit = unitid
 	
 	frame:SetScript("OnUpdate", ItemOnUpdate)	
@@ -226,7 +232,7 @@ function PluginTalents.SpecText(unit, returnNil)
 
 	if not spec[guid] and returnNil then return nil end
 
-	local cur = spec[guid][spec[guid].talentGroup]
+	local cur = spec[guid]
 	if not cur then return end
 	local name = cur[1]
 	local texture = cur[2]
