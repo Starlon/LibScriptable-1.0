@@ -155,7 +155,7 @@ function PluginTalents:TalentQuery_Ready(e, name, realm, unitid)
 
 		spec[guid] = new(name, texture, background)
 	else
-		local id, name, description, icon, background, role, class = GetSpecializationInfoByID(specid)
+		local id, name, description, texture, background, role, class = GetSpecializationInfoByID(specid)
 	
 		spec[guid] = new(name, texture, background, role)
 	end
