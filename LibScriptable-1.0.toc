@@ -24,7 +24,7 @@ Libs\LibBossIDs-1.0\lib.xml
 Libs\AceLocale-3.0\AceLocale-3.0.xml
 Libs\LibLocalizedEJBosses-1.0\lib.xml
 Libs\LibFail-2.0\lib.xml
-Libs\LibDogTag-3.0\lib.xml
-Libs\LibDogTag-Unit-3.0\lib.xml
+#Libs\LibDogTag-3.0\lib.xml
+#Libs\LibDogTag-Unit-3.0\lib.xml
 
 LibScriptable-1.0.xml

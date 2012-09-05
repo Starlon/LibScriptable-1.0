@@ -21,8 +21,8 @@ local LibBuffer = LibStub("LibScriptableUtilsBuffer-1.0", true)
 assert(LibBuffer, MAJOR .. " requires LibScriptableUtilsBuffer-1.0")
 local LibEvaluator = LibStub("LibScriptableUtilsEvaluator-1.0")
 assert(LibEvaluator, MAJOR .. " requires LibScriptableUtilsEvaluator-1.0")
-local LibDogTag = LibStub("LibDogTag-3.0", true)
-assert(LibDogTag, MAJOR .. " requires LibDogTag-3.0", true)
+--local LibDogTag = LibStub("LibDogTag-3.0", true)
+--assert(LibDogTag, MAJOR .. " requires LibDogTag-3.0", true)
 local Locale = LibStub("LibScriptableLocale-1.0", true)
 assert(Locale, MAJOR .. " requires LibScriptableLocale-1.0")
 local L = Locale.L
@@ -526,12 +526,13 @@ function textScroll(self)
 		self.buffer = rtrim(dst:AsString())
 	end
 
+	--[[
 	if self.dogtag then
 		local unit = type(self.dogtagUnit) == "string" and self.dogtagUnit or self.unit
 		local kvargs = newKVargs(unit)
 		self.buffer = LibDogTag:Evaluate(self.buffer, "Unit", kvargs)
 		delKVargs(kvargs)
-	end
+	end]]
 
 	if self.clearOverride then self.unitOverride = false; self.clearOverride = false end
 

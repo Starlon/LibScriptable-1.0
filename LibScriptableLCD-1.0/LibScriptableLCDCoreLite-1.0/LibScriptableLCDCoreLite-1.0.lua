@@ -87,6 +87,8 @@ local PluginRecount = LibStub("LibScriptablePluginRecount-1.0", true)
 assert(PluginRecount, MAJOR .. " requires LibScriptablePluginRecount-1.0")
 local PluginDoodlepad = LibStub("LibScriptablePluginDoodlepad-1.0")
 assert(PluginDoodlepad, MAJOR .. " requires LibScriptablePluginDoodlepad-1.0")
+local PluginTalents = LibStub("LibScriptablePluginTalents-1.0")
+assert(PluginTalents, MAJOR .. " requires LibScriptablePluginTalents-1.0")
 
 local pool = setmetatable({}, {__mode = "k"})
 local objects = {}
@@ -170,7 +172,8 @@ function LibCore:New(environment, name, errorLevel)
 	PluginSkada:New(environment)	
 	PluginRecount:New(environment)
 	PluginDoodlepad:New(environment)
-	
+	PluginTalents:New(environment)
+
 	environment._G = _G
 	environment.environment = environment
 	environment.null = { }

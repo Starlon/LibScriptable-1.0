@@ -4,6 +4,8 @@ local PluginTalents = LibStub:NewLibrary(MAJOR, MINOR)
 if not PluginTalents then return end
 --local GroupTalents = LibStub("LibGroupTalents-1.0", true)
 --assert(GroupTalents, MAJOR .. " requires LibGroupTalents-1.0")
+local TalentQuery = LibStub("LibTalentQuery-1.0", true)
+assert(TalentQuery, MAJOR .. " requires LibTalentQuery-1.0")
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
 assert(LibTimer, MAJOR .. " requires LibScriptableUtilsTimer-1.0")
 local Locale = LibStub("LibScriptableLocale-1.0", true)
@@ -33,7 +35,6 @@ local inspectUnit
 local THROTTLE_TIME = 500
 local throttleTimer 
 local ScriptEnv = {}
-local lastInspect = 0
 
 if not PluginTalents.__index then
 	PluginTalents.__index = PluginTalents
@@ -68,14 +69,6 @@ function PluginTalents:New(environment)
 		environment[k] = v
 	end	
 	return environment
-end
-
-local indexOf = function(t, val, talengGroup)
-	for i=1, #t do
-		if t[i][2] == val then
-			return i
-		end
-	end
 end
 
 local iconsz = 19 
@@ -144,102 +137,21 @@ local function ItemOnUpdate(elapsed)
 	end
 end
 
-
-local function sortfunc(a, b)
-	return a>b
-end
-
---[[
-function PluginTalents:OnUpdate(event, guid, unitid, newSpec, talent1, talent2, talent3)
-	local class = UnitClass(unitid)
-	if not talentTrees[class] then return end
-	local guid = UnitGUID(unitid)
-	local isnotplayer = not UnitIsUnit("player", unitid)
-	local talentGroup = GetActiveTalentGroup(isnotplayer)
-	
-	if not spec[guid] then
-		spec[guid] = new()
-		spec[guid].guid = guid
-	end
-
-	if not spec[guid][talentGroup] then
-		spec[guid][talentGroup] = new()
-	end
-
-	for tab = 1, 3 do
-		spec[guid][talentGroup][tab] = new(nil, nil, nil, "None", nil)
-	end
-	
-	local specNames 
-	if GroupTalents:GetTreeNames(class) then
-		specNames = new(GroupTalents:GetTreeNames(class))
-	else
-		specNames = new(unpack(talentTrees[class]))
-	end
-
-	local highPoints = new()
-	local pointsspent = new(talent1, talent2, talent3)
-	
-	for i, point in ipairs(pointsspent) do
-		local _, treename, _, iconTexture = GetTalentTabInfo(i, isnotplayer, false, talentGroup)
-	
-		highPoints[i] = point
-		spec[guid][talentGroup][i] = {treename, point, iconTexture}
-	end
-	
-	table.sort(highPoints, sortfunc)
-	
-	local i = indexOf(spec[guid][talentGroup], highPoints[1])
-	spec[guid].tab = i
-	spec[guid].talentGroup = talentGroup
-
-	del(specNames)
-	del(highPoints)
-	del(pointsspent)
-	
-	inspectUnit = unitid
-	
-	frame:SetScript("OnUpdate", ItemOnUpdate)
-end
---]]
-
 function PluginTalents:TalentQuery_Ready(e, name, realm, unitid)
 	local class = UnitClass(unitid)
-	local specNames = new()
 	local guid = UnitGUID(unitid)
 	local isnotplayer = not UnitIsUnit("player", unitid)
-	local talentGroup = GetActiveTalentGroup(isnotplayer)
+	local talentGroup = GetActiveSpecGroup(isnotplayer)
 
 	if not spec[guid] then
 		spec[guid] = new()
 		spec[guid].guid = guid
 	end
 
-	if not spec[guid][talentGroup] then
-		spec[guid][talentGroup] = new()
-	end
-
-	for tab = 1, 3 do
-		spec[guid][talentGroup][tab] = new(nil, nil, nil, "None", nil)
-	end
-	
-	local specNames = new()
-	local highPoints = new()
-	for tab = 1, GetNumTalentTabs(isnotplayer) do
-		local _, treename, _, iconTexture, pointsSpent = GetTalentTabInfo(tab, isnotplayer, false, talentGroup)
-		highPoints[tab] = pointsSpent
-		spec[guid][talentGroup][tab] = new(treename, pointsSpent, iconTexture)
-		specNames[tab] = treename
-	end
-	
-	table.sort(highPoints, sortfunc)
-	
-	local i = indexOf(spec[guid][talentGroup], highPoints[1])
-	spec[guid].tab = i
 	spec[guid].talentGroup = talentGroup
 	
-	del(specNames)
-	del(highPoints)
+	local _, treename, _, iconTexture, background = GetSpecializationInfo(talentGroup, false)
+	spec[guid][talentGroup] = new(treename, iconTexture, background)
 
 	inspectUnit = unitid
 	
@@ -263,24 +175,18 @@ function PluginTalents:OnRoleChange(event, guid, unit, newrole, oldrole)
 	spec_role[guid].oldrole = oldrole
 end
 
---[[
-local function okToInspect(unit)
-	local guid = UnitGUID(unit)
-	return 
-end
-]]
-
 function PluginTalents.SendQuery(unit)
 	local guid = UnitGUID(unit)
 	if not UnitIsPlayer(unit) or not (CheckInteractDistance(unit, 1)) then return end
 
-	frame:RegisterEvent("INSPECT_READY")
-	NotifyInspect(unit)
-	lastInspect = GetTime()
+	if UnitIsUnit(unit, "player") then
+		PluginTalents:TalentQuery_Ready(_, UnitName(unit), nil, "player")
+	else
+		TalentQuery:Query(unit)
+	end
 end
 
 function PluginTalents.UnitILevel(unit, returnNil)
-	do return 0 end
 	if type(unit) ~= "string" then return end
 	local guid = UnitGUID(unit)
 	if not UnitIsPlayer(unit) or not UnitExists(unit) then return end
@@ -303,7 +209,6 @@ ScriptEnv.UnitILevel = PluginTalents.UnitILevel
 
 function PluginTalents.SpecText(unit, returnNil)
 	if type(unit) ~= "string" then return end
-	do return end
 	if not UnitIsPlayer(unit) or not UnitExists(unit) then return end
 	local guid = UnitGUID(unit)
 	local guid = UnitGUID(unit)
@@ -318,18 +223,18 @@ function PluginTalents.SpecText(unit, returnNil)
 
 	if not spec[guid] then return L["Scanning"] .. periods end
 
+
 	if not spec[guid] and returnNil then return nil end
 
 	local cur = spec[guid][spec[guid].talentGroup]
-	local one = cur[1][2]
-	local two = cur[2][2]
-	local three = cur[3][2]
-	local name = cur[spec[guid].tab][1]
-	local texture = cur[spec[guid].tab][3]
+	if not cur then return end
+	local name = cur[1]
+	local texture = cur[2]
+	local background = cur[3]
 	
-	if not name or not texture or not one or not two or not three then return end
-	
-	return ('|T%s:12|t %s (%d/%d/%d)'):format(texture or "", name, one, two, three)
+	if not name then return L["Scanning"] .. periods end
+
+	return ('|T%s:12|t %s'):format(texture or "", name or "")
 end
 ScriptEnv.SpecText = PluginTalents.SpecText
 
@@ -354,10 +259,7 @@ end
 ScriptEnv.ClearSpec = PluginTalents.ClearSpec
 
 function PluginTalents.GetRole(unit)
-	local guid = UnitGUID(unit)
-	if spec[guid] then
-		return roleTypes[spec[guid].role], roleTypes[spec[guid].oldrole or -1]
-	end
+	return UnitGroupRolesAssigned(unit);
 end
 ScriptEnv.GetRole = PluginTalents.GetRole
 
@@ -534,5 +436,8 @@ function WipeInspect()
 end
 ScriptEnv.WipeInspect = WipeInspect
 
+--GroupTalents.RegisterCallback(PluginTalents, "LibGroupTalents_Update", "OnUpdate")
+TalentQuery.RegisterCallback(PluginTalents, "TalentQuery_Ready")
+TalentQuery.RegisterCallback(PluginTalents, "LibGroupTalents_RoleChange", "OnRoleChange")
 throttleTimer = LibTimer:New(MAJOR .. " throttle timer", THROTTLE_TIME, true, PluginTalents.SendQuery)
 
