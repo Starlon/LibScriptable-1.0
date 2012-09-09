@@ -337,12 +337,13 @@ ScriptEnv.RedThroughBlue = RedThroughBlue
 -- @param g The color's green value
 -- @param b The color's blue value
 -- @return A colorized string suitable to insert in a fonstring
+local floor = math.floor
 local function Colorize(str, r, g, b)
 	if type(str) ~= "string" and type(str) ~= "number" then return "" end
 	if type(r) ~= "number" then r = 1 end
 	if type(g) ~= "number" then g = 1 end
 	if type(b) ~= "number" then b = 1 end
-	return ("|cff%02x%02x%02x%s|r"):format(r * 255, g * 255, b * 255, tostring(str))
+	return ("|cff%02x%02x%02x%s|r"):format(floor(r * 255), floor(g * 255), floor(b * 255), tostring(str))
 end
 ScriptEnv.Colorize = Colorize
 
