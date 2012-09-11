@@ -270,6 +270,16 @@ ScriptEnv.ThreatStatusColor = ThreatStatusColor
 -- @param perc A value between 0 and 1 -- The position within the gradient
 -- @return Red, green, and blue
 local function Gradient(perc)
+    if type(perc) ~= "number" then 
+	perc = 0
+    end
+
+    if perc > 1 then
+	perc = 1	
+    elseif perc < 0 then
+	perc = 0
+    end
+
     if perc <= 0.5 then
         return 1, perc*2, 0
     else
@@ -343,6 +353,9 @@ local function Colorize(str, r, g, b)
 	if type(r) ~= "number" then r = 1 end
 	if type(g) ~= "number" then g = 1 end
 	if type(b) ~= "number" then b = 1 end
+	if lolz then
+		print(str, r, g, b)
+	end
 	return ("|cff%02x%02x%02x%s|r"):format(floor(r * 255), floor(g * 255), floor(b * 255), tostring(str))
 end
 ScriptEnv.Colorize = Colorize
