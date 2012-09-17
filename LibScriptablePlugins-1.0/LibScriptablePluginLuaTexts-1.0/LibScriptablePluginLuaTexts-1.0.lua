@@ -8,6 +8,8 @@ local PluginUtils = LibStub("LibScriptablePluginUtils-1.0", true)
 assert(PluginUtils, MAJOR .. " requires LibScriptablePluginUtils-1.0")
 local PluginUnitTooltipScan = LibStub("LibScriptablePluginUnitTooltipScan-1.0", true)
 assert(PluginUnitTooltipScan, MAJOR .. " requires LibScriptablePluginUnitTooltipScan-1.0")
+local PluginTalents = LibStub("LibScriptablePluginTalents-1.0")
+assert(PluginTalents, MAJOR .. " requires LibScriptablePluginTalents-1.0")
 local LibHook = LibStub("LibScriptableUtilsHook-1.0", true)
 assert(LibHook, MAJOR .. " requires LibScriptableUtilsHook-1.0")
 local LibTimer = LibStub("LibScriptableUtilsTimer-1.0", true)
@@ -1262,7 +1264,6 @@ ScriptEnv.PVPDuration = PVPDuration
 
 local count = 0
 local function PVPRank(unit)
---[[
 	local pvp = PluginTalents.UnitPVPStats(unit);
 	if not CheckInteractDistance(unit, 1) and not pvp then return L["Out of Range"] end
 	local txt;
@@ -1285,7 +1286,6 @@ local function PVPRank(unit)
 	  txt = L["Fetching"] .. elips
 	end
 	return txt
-]]
 end
 ScriptEnv.PVPRank = PVPRank
 
