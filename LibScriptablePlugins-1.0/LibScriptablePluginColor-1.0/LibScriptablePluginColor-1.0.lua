@@ -421,7 +421,7 @@ ScriptEnv.HPColor = HPColor
 
 local PowerBarColor = _G.PowerBarColor
 
-local PowerTypes = {Warrior = "RAGE", Rogue = "ENERGY", Pet = "HAPPINESS", Deathknight = "RUNIC_POWER", Hunter = "FOCUS"}
+local PowerTypes = {Warrior = "RAGE", Rogue = "ENERGY", Pet = "HAPPINESS", Deathknight = "RUNIC_POWER", Hunter = "FOCUS", Monk = "ENERGY"}
 
 setmetatable(PowerTypes, {__index = function(self, key)
 	if rawget(self, key) then return rawget(self, key) end
