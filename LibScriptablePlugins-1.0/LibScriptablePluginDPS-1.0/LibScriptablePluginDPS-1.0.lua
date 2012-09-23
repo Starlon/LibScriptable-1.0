@@ -112,8 +112,6 @@ function PluginDPS:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventType, hideCaster,
 
 	if not events[eventType] or not sourceGUID then return end
 
-	if sourceName ~= "Blurrs" then return end
-
 	local index = events[eventType]
 	local damage = select(index, ...)
 	local overkill = select(index+1, ...)
