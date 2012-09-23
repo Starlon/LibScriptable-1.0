@@ -96,25 +96,37 @@ function PluginDPS.GetData()
 end
 ScriptEnv.GetData = PluginDPS.GetData
 
+function PluginDPS.DPSActive()
+	return PluginDPS.active
+end
+ScriptEnv.DPSActive = PluginDPS.DPSActive
 local events = {
-	SWING_DAMAGE = true,
-	RANGE_DAMAGE = true,
-	SPELL_DAMAGE = true,
-	SPELL_PERIODIC_DAMAGE = true,
-	DAMAGE_SHIELD = true,
-	DAMAGE_SPLIT = true,
+	SWING_DAMAGE = 1,
+	RANGE_DAMAGE = 4,
+	SPELL_DAMAGE = 4,
+	SPELL_PERIODIC_DAMAGE = 4,
+	DAMAGE_SHIELD = 4,
+	DAMAGE_SPLIT = 4,
 }
-function PluginDPS:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName,
-		destFlags, destRaidFlags, spellID, spellName, spellSchool, damage, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing)
+function PluginDPS:COMBAT_LOG_EVENT_UNFILTERED(timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
 
 	if not events[eventType] or not sourceGUID then return end
+
+	if sourceName ~= "Blurrs" then return end
+
+	local index = events[eventType]
+	local damage = select(index, ...)
+	local overkill = select(index+1, ...)
+	local resisted = select(index+3, ...)
+	local blocked = select(index+4, ...)
+	local absorbed = select(index+5, ...)
 
 	if not data[sourceGUID] then
 		data[sourceGUID] = {}
 		data[sourceGUID].startTime = GetTime()
 	end
 
-	data[sourceGUID].damage = (data[sourceGUID].damage or 0) + (damage or 0) - (overkill or 0)
+	data[sourceGUID].damage = (data[sourceGUID].damage or 0) + (damage or 0)
 	data[sourceGUID].lastUpdate = GetTime()
 end
 
