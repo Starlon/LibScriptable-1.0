@@ -1290,7 +1290,6 @@ end
 ScriptEnv.PVPRank = PVPRank
 
 local function ArenaTeam(unit, num)
---[[
 	local pvp = PluginTalents.UnitPVPStats(unit);
 	if not pvp then return "" end
 	local team = pvp.teams[num]
@@ -1316,7 +1315,6 @@ local function ArenaTeam(unit, num)
 		text = format("%s %s %s %s (%.1f pts) %s", tag, emblem, team.teamName or "Name?", PluginColor.Colorize(team.teamRating, perc, 0.5, 1), points, winlost)
 	end
 	return text
-]]
 end
 ScriptEnv.ArenaTeam = ArenaTeam
 
