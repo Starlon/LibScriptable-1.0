@@ -17,6 +17,8 @@ local update
 local OnFinish
 local tconcat = table.concat
 
+local MINDURATION = 50
+
 LibTimer.frame = CreateFrame("Frame")
 
 if not LibTimer.__index then
@@ -102,6 +104,10 @@ function LibTimer:New(name, duration, repeating, callback, data, errorLevel)
 
 	duration = type(duration) == "number" and duration or 0
 	
+	if duration > 0 and duration < MINDURATION then 
+		duration = MINDURATION
+	end
+
 	local obj = next(pool)
 
 	if obj then
